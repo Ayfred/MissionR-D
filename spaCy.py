@@ -27,8 +27,16 @@ def affichage_tokens(doc):
         print(token.text, token.pos_)
 
 #Removal of explanations
-def removesExplanations(text):
-    return re.sub('http[s]?://\S+', '', text)
+def explanationsRemoval(doc):
+    # Itérer à travers chaque token dans le document
+    for token in doc:
+        # Si le token est "parce que", "car" ou "puisque", supprimer tous les tokens suivants dans la phrase
+        if token.text.lower() in ["parce", "car", "puisque"]:
+            sentence = sentence[:token.idx]
+            break
+    # Supprimer tout ce qui est entre parenthèses
+    sentence = re.sub(r'\([^()]*\)', '', sentence)
+    return sentence
 
 #Removal of quotes
 def quotesRemoval(doc):
@@ -72,13 +80,22 @@ def stopWordsRemoval(text):
     return ' '.join(splitext)
 
 
+def propNounRemoval(doc):
+    result = []
+    for token in doc:
+        if not (token.ent_type_ == "ORG" or token.ent_type_ == "PERSON" or token.text.istitle()):
+            result.append(token.text)
+    return " ".join(result)
+
 
 #run
 doc = tokenisation(text)
-modifiedText = removesExplanations(text)
+modifiedText = explanationsRemoval(doc)
 doc = tokenisation(modifiedText)
 modifiedText = quotesRemoval(doc)
 modifiedText = contactRemoval(modifiedText)
 modifiedText = symbolsRemoval(modifiedText)
 modifiedText = stopWordsRemoval(modifiedText)
+doc = tokenisation(modifiedText)
+modifiedText = propNounRemoval(doc)
 print(modifiedText)
