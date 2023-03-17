@@ -15,7 +15,6 @@ text = "Selon Wikipédia il l'appelle Laura 😊😊😊(hezignborzingiozrnoivzn
 nlp = spacy.load("fr_core_news_sm")
 listStopWords = [str(x) for x in nlp.Defaults.stop_words]
 
-
 #Tokenisation
 def tokenisation(text):
     return nlp(text)
