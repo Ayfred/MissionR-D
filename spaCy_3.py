@@ -3,13 +3,11 @@
 
 #Importation des packages Python/spaCy
 import spacy
-from spacy.matcher import Matcher
-from spacy.lang.fr.examples import sentences 
 import re
 import csv
 
 # open the CSV file using the csv module
-with open('GooglePlayComments.csv', newline='',  encoding='utf-8') as csvfile:
+with open('MissionR-D/GooglePlayComments.csv', newline='',  encoding='utf-8') as csvfile:
     # create a csv reader object
     reader = csv.reader(csvfile)
     # create an empty list to store the strings
@@ -17,12 +15,13 @@ with open('GooglePlayComments.csv', newline='',  encoding='utf-8') as csvfile:
     # loop through each row in the CSV file
     for row in reader:
         # add the string to the list
-        print(row)
+        #print(row)
         string_list.append(row[0])
 
 # print the list of strings
-#print(string_list)
+print(string_list)
 
+string_list_clean = []
 
 
 #Exemple de texte
@@ -190,7 +189,9 @@ def united(text):
     return sentence
 
 
-
-
+for string in string_list:
+    united_string = united(string)
+    string_list_clean.append(united_string)
+print(string_list_clean)
 #run
 #print(united(text))
