@@ -22,13 +22,13 @@ with open('MissionR-D/GooglePlayComments.csv', newline='',  encoding='utf-8') as
     for row in reader:
         # add the string to the list
         #print(row)
-        if detect(row[0]) == 'fr':
-            string_list.append(row[0])
+        #if detect(row[0]) == 'fr':
+        string_list.append(row[0])
 
-print(len(string_list))
+#print(len(string_list))
 
-# print the list of strings
-print(string_list)
+#print the list of strings
+#print(string_list)
 
 string_list_clean = []
 
@@ -204,7 +204,18 @@ for string in string_list:
 print(string_list_clean)
 #run
 #print(united(text))"""
-united_string = united(string_list[0])
-print(united_string)
+#united_string = united(string_list[0])
+#print(united_string)
 
-print(affichage_tokens(tokenisation(string_list[0])))
+
+from spacy.language import Language
+from spacy_langdetect import LanguageDetector
+
+def get_lang_detector(nlp, name):
+    return LanguageDetector()
+
+Language.factory("language_detector", func=get_lang_detector)
+nlp.add_pipe('language_detector', last=True)
+text = 'はいあぃがとう.'
+doc = nlp(text)
+print(doc._.language)
