@@ -1,10 +1,16 @@
 #Téléchargement des packages Python/spaCy
 #!python -m spacy download fr_core_news_sm
-
+import time
+start = time.time()
 #Importation des packages Python/spaCy
 import spacy
+end = time.time()
+print(end - start)
 import re
+import pandas as pd
 import csv
+from langdetect import detect
+
 
 # open the CSV file using the csv module
 with open('MissionR-D/GooglePlayComments.csv', newline='',  encoding='utf-8') as csvfile:
@@ -16,7 +22,10 @@ with open('MissionR-D/GooglePlayComments.csv', newline='',  encoding='utf-8') as
     for row in reader:
         # add the string to the list
         #print(row)
-        string_list.append(row[0])
+        if detect(row[0]) == 'fr':
+            string_list.append(row[0])
+
+print(len(string_list))
 
 # print the list of strings
 print(string_list)
@@ -188,10 +197,14 @@ def united(text):
 
     return sentence
 
-
+"""
 for string in string_list:
     united_string = united(string)
     string_list_clean.append(united_string)
 print(string_list_clean)
 #run
-#print(united(text))
+#print(united(text))"""
+united_string = united(string_list[0])
+print(united_string)
+
+print(affichage_tokens(tokenisation(string_list[0])))
