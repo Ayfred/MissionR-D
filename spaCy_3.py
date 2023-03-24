@@ -178,7 +178,7 @@ def united(text):
         if (token.pos_ == "PRON" or token.pos_ == "DET"):
             continue
         else:
-            if not token.text == "'":
+            if not token.text.__contains__("'"):
                 text += token.text
                 text += " "
     sentence = text
