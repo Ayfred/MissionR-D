@@ -1,16 +1,10 @@
 #Téléchargement des packages Python/spaCy
 #!python -m spacy download fr_core_news_sm
-import time
-start = time.time()
+
 #Importation des packages Python/spaCy
 import spacy
-end = time.time()
-print(end - start)
 import re
-import pandas as pd
 import csv
-from langdetect import detect
-
 
 # open the CSV file using the csv module
 with open('MissionR-D/GooglePlayComments.csv', newline='',  encoding='utf-8') as csvfile:
@@ -22,13 +16,10 @@ with open('MissionR-D/GooglePlayComments.csv', newline='',  encoding='utf-8') as
     for row in reader:
         # add the string to the list
         #print(row)
-        #if detect(row[0]) == 'fr':
         string_list.append(row[0])
 
-#print(len(string_list))
-
-#print the list of strings
-#print(string_list)
+# print the list of strings
+print(string_list)
 
 string_list_clean = []
 
@@ -81,6 +72,14 @@ def quotesRemoval(doc):
                 boolean_punct = True
     return filtered_text
 
+#Removal of ' and the char that precede it
+def apostropheRemoval(doc):
+    for token in doc:
+        if token.text == "'":
+            filtered_text += token.text
+            filtered_text += " "
+    return filtered_text
+
 #Removal of URLs
 def urlRemoval(text):
     return re.sub('http[s]?://\S+', '', text)
@@ -128,36 +127,32 @@ def propNounRemoval(doc):
     return " ".join(result)
 
 def united(text):
-    doc = nlp(text)
-
-    sentence = doc.text
+    doc =  text.split(" ");
     # Itérer à travers chaque token dans le document
     for token in doc:
 
         #Remove explanations
         # Si le token est "parce que", "car" ou "puisque", supprimer tous les tokens suivants dans la phrase
-        if token.text.lower() in ["parce", "car", "puisque"]:
-            sentence = sentence[:token.idx]
+        if token in ["parce", "car", "puisque"]:
+            doc = doc[:token.index()]
             break
+    
     # Supprimer tout ce qui est entre parenthèses
+    sentence = ' '.join(doc)
     sentence = re.sub(r'\([^()]*\)', '', sentence)
 
-    doc = nlp(sentence)
-
+    doc = sentence.split(" ")
     #Filter
     filtered_text = ""
     Punc_list = ['"', "'"]
     boolean_punct = False
     for token in doc:
-        if not token.text in Punc_list:
+        if not token in Punc_list:
             if not boolean_punct:
                 filtered_text += token.text
                 filtered_text += " "
         else :
-            if boolean_punct :
-                boolean_punct = False
-            else :
-                boolean_punct = True
+            boolean_punct = not boolean_punct
 
     sentence = filtered_text
     sentence = re.sub('http[s]?://\S+', '', sentence)
@@ -170,12 +165,12 @@ def united(text):
     sentence = re.sub(phone_regex,"", sentence)
     sentence = re.sub(email_regex,"", sentence)
     sentence = re.sub(r'[^\w]', ' ', sentence)
-    splitext = sentence.split(" ")
-    for word in splitext:
+    doc = sentence.split(" ")
+    for word in doc:
         if word in listStopWords:
-            splitext.remove(word)
-    sentence= ' '.join(splitext)
-
+            doc.remove(word)
+    
+    sentence = ' '.join(doc)
     doc = nlp(sentence)
     #texte = doc.text
     text = ""
@@ -183,12 +178,12 @@ def united(text):
         if (token.pos_ == "PRON" or token.pos_ == "DET"):
             continue
         else:
-            text += token.text_with_ws
-            text += " "
+            if not token.text == "'":
+                text += token.text
+                text += " "
     sentence = text
 
     doc = nlp(sentence)
-
     result = []
     for token in doc:
         if not (token.ent_type_ == "ORG" or token.ent_type_ == "PERSON" or token.text.istitle()):
@@ -197,25 +192,10 @@ def united(text):
 
     return sentence
 
-"""
+
 for string in string_list:
     united_string = united(string)
     string_list_clean.append(united_string)
 print(string_list_clean)
 #run
-#print(united(text))"""
-#united_string = united(string_list[0])
-#print(united_string)
-
-
-from spacy.language import Language
-from spacy_langdetect import LanguageDetector
-
-def get_lang_detector(nlp, name):
-    return LanguageDetector()
-
-Language.factory("language_detector", func=get_lang_detector)
-nlp.add_pipe('language_detector', last=True)
-text = 'はいあぃがとう.'
-doc = nlp(text)
-print(doc._.language)
+#print(united(text))
