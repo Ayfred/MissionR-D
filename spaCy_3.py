@@ -73,12 +73,14 @@ def quotesRemoval(doc):
     return filtered_text
 
 #Removal of ' and the char that precede it
-def apostropheRemoval(doc):
-    for token in doc:
-        if token.text == "'":
-            filtered_text += token.text
-            filtered_text += " "
-    return filtered_text
+def apostropheRemoval(sentence):
+    sentence.replace("'", " ")
+    words = sentence.split(" ")
+    newSentence = ""
+    for word in words:
+        if word.len() > 1:
+            newSentence += word + " "
+    return newSentence
 
 #Removal of URLs
 def urlRemoval(text):
