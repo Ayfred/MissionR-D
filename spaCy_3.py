@@ -160,10 +160,12 @@ def united(text):
     sentence = re.sub('http[s]?://\S+', '', sentence)
 
     # Regular expressions for phone numbers and email addresses
+    quotes = r"\.[^\s]"
     phone_regex = r"(?<!\d)(?:\d[ -/\\_\d]*){10}(?!\d)"
     email_regex = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"  # matches john.doe@example.com
 
     # Find phone numbers and email addresses in the sentence
+    sentence = re.sub(quotes,"", sentence)
     sentence = re.sub(phone_regex,"", sentence)
     sentence = re.sub(email_regex,"", sentence)
     sentence = re.sub(r'[^\w]', ' ', sentence)
